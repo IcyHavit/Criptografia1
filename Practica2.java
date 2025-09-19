@@ -18,15 +18,15 @@ public class Practica2 {
         boolean salir = false;
 
         while (!salir) {
-            System.out.println("\n--- MENÚ---");
-            System.out.println("1. Listar coprimos con 'n' (Probar createList)");
-            System.out.println("2. Encontrar inversa modular (Probar test)");
-            System.out.println("3. Generar una llave aleatoria (Probar randomKey)");
-            System.out.println("4. Listar TODAS las llaves válidas para un 'n' en un archivo");
+            System.out.println("\n--- MENU---");
+            System.out.println("1. Listar coprimos con 'n'");
+            System.out.println("2. Encontrar inversa modular");
+            System.out.println("3. Generar una llave aleatoria");
+            System.out.println("4. Listar TODAS las llaves validas para un 'n' en un archivo");
             System.out.println("5. Cifrar mensaje con LLAVE MANUAL");
             System.out.println("6. Descifrar mensaje");
             System.out.println("7. Salir");
-            System.out.print("Elige una opción: ");
+            System.out.print("Elige una opcion: ");
 
             try {
                 int opcion = scanner.nextInt();
@@ -190,7 +190,11 @@ public class Practica2 {
         if (a <= 0 || a >= n) throw new IllegalArgumentException("a debe estar en [1, n-1]");
         if (BigInteger.valueOf(a).gcd(BigInteger.valueOf(n)).intValue() != 1)
             throw new IllegalArgumentException("a y n deben ser coprimos (a ∈ Z*_n)");
-        return BigInteger.valueOf(a).modInverse(BigInteger.valueOf(n)).intValue();
+        List<Integer> coprimos = createList(n);
+        for (int b : coprimos) {
+            if ((a * b) % n == 1) return b;
+        }
+        return 0;
     }
     
     public static SimpleEntry<Integer, Integer> randomKey(int n) {
