@@ -39,7 +39,7 @@ public class Practica2 {
                         try {
                             int n = scanner.nextInt(); scanner.nextLine();
                             List<Integer> coprimos = createList(n);
-                            System.out.println("Los números coprimos con " + n + " (elementos de Z*_" + n + ") son:");
+                            System.out.println("Los numeros coprimos con " + n + " (elementos de Z*_" + n + ") son:");
                             System.out.println(coprimos);
                         } catch (Exception e) {
                             System.out.println("Error: " + e.getMessage());
@@ -50,12 +50,13 @@ public class Practica2 {
                     // --- Opción 2: Probar test (inversa) ---
                     case 2: {
                         try {
-                            System.out.print("Introduce el módulo (n): ");
+                            System.out.print("Introduce el modulo (n): ");
                             int n = scanner.nextInt();
-                            System.out.print("Introduce el número para hallar su inversa (a): ");
+                            System.out.print("Introduce el numero para hallar su inversa (a): ");
                             int a = scanner.nextInt(); scanner.nextLine();
-                            int inversa = test(n, a);
-                            System.out.println("La inversa de " + a + " módulo " + n + " es: " + inversa);
+                            int[] res = eea(n, a);
+                            int inversa = res[2];                            
+                            System.out.println("La inversa de " + a + " modulo " + n + " es: " + inversa);
                         } catch (Exception e) {
                             System.out.println("Error: " + e.getMessage());
                         }
@@ -64,7 +65,7 @@ public class Practica2 {
 
                     // --- Opción 3: Probar randomKey ---
                     case 3: {
-                        System.out.print("Introduce el tamaño del alfabeto (n) para generar la llave: ");
+                        System.out.print("Introduce el tamano del alfabeto (n) para generar la llave: ");
                         try {
                             int n = scanner.nextInt(); scanner.nextLine();
                             SimpleEntry<Integer, Integer> key = randomKey(n);
@@ -77,7 +78,7 @@ public class Practica2 {
 
                     // --- Opción 4: Listar todas las llaves en archivo ---
                     case 4: {
-                        System.out.print("Introduce el tamaño del alfabeto (n) para listar todas sus llaves: ");
+                        System.out.print("Introduce el tamano del alfabeto (n) para listar todas sus llaves: ");
                         try {
                             int n = scanner.nextInt(); scanner.nextLine();
                             String nombreArchivo = "llaves_afin_n" + n + ".txt";
@@ -115,7 +116,6 @@ public class Practica2 {
                     }
 
                     case 6: {
-                        System.out.println("ℹ️ Nota: El cifrado/descifrado usa el alfabeto ASCII imprimible (n=95).");
                         try {
                             System.out.print("Introduce el valor de 'a' de la llave K: ");
                             int a = scanner.nextInt();
@@ -133,17 +133,16 @@ public class Practica2 {
                         break;
                     }
 
-                    // --- Opción 8: Salir ---
                     case 7:
                         salir = true;
                         System.out.println("¡Hasta luego!");
                         break;
 
                     default:
-                        System.out.println("Opción no válida. Por favor, elige un número del 1 al 8.");
+                        System.out.println("Opcion no valida. Por favor, elige un numero del 1 al 8.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Debes ingresar un número. Inténtalo de nuevo.");
+                System.out.println("Error: Debes ingresar un numero. Intentalo de nuevo.");
                 scanner.nextLine(); // Limpiar el buffer en caso de error
             }
         }
@@ -155,22 +154,23 @@ public class Practica2 {
     public static void listAllValidKeysToFile(int n, String filename) throws IOException {
         System.out.println("Generando llaves para n = " + n + " y guardando en '" + filename + "'...");
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            writer.println("Llaves válidas para el Cifrado Afín con n = " + n);
+            writer.println("Llaves validas para el Cifrado Afin con n = " + n);
             writer.println("Formato: Llave K=(a, b), Inversa de a (a⁻¹ mod n)");
             writer.println("-----------------------------------------------------");
             List<Integer> valid_a = createList(n);
             if (valid_a.isEmpty()) {
-                writer.println("No existen valores válidos para 'a' ya que no hay coprimos con n=" + n);
+                writer.println("No existen valores validos para 'a' ya que no hay coprimos con n=" + n);
                 System.out.println("No se encontraron llaves válidas.");
                 return;
             }
             for (int a : valid_a) {
-                int a_inverse = test(n, a);
+                int[] res = eea(n, a);
+                int a_inverse = res[2];
                 for (int b = 0; b < n; b++) {
                     writer.printf("K=(%d, %d), a⁻¹=%d\n", a, b, a_inverse);
                 }
             }
-            System.out.println("¡Listo! El archivo '" + filename + "' ha sido creado con éxito.");
+            System.out.println("¡Listo! El archivo '" + filename + "' ha sido creado con exito.");
         }
     }
     
@@ -185,16 +185,27 @@ public class Practica2 {
         return coprimos;
     }
     
-    public static int test(int n, int a) {
-        if (n < 2) throw new IllegalArgumentException("n debe ser >= 2");
-        if (a <= 0 || a >= n) throw new IllegalArgumentException("a debe estar en [1, n-1]");
-        if (BigInteger.valueOf(a).gcd(BigInteger.valueOf(n)).intValue() != 1)
-            throw new IllegalArgumentException("a y n deben ser coprimos (a ∈ Z*_n)");
-        List<Integer> coprimos = createList(n);
-        for (int b : coprimos) {
-            if ((a * b) % n == 1) return b;
+    public static int[] eea(int n, int a) {
+        int r0 = n, r1 = a;
+        int s0 = 1, t0 = 0;
+        int s1 = 0, t1 = 1;
+        int i = 1;
+
+        while (r1 != 0) {
+            i = i + 1;
+            int r = r0 % r1;
+            int q = (r0 - r) / r1;
+            int s = s0 - q * s1;
+            int t = t0 - q * t1;
+
+            r0 = r1;
+            r1 = r;
+            s0 = s1; s1 = s;
+            t0 = t1; t1 = t;
         }
-        return 0;
+        
+        if(t0<0) t0 = n - ((-t0)%n); 
+        return new int[]{r0, s0, t0};
     }
     
     public static SimpleEntry<Integer, Integer> randomKey(int n) {
@@ -214,7 +225,7 @@ public class Practica2 {
         int b = key.getValue();
         StringBuilder ciphertext = new StringBuilder();
         for (char c : plaintext.toCharArray()) {
-            if (c < 32 || c > 126) throw new IllegalArgumentException("Carácter '" + c + "' fuera del alfabeto ASCII imprimible.");
+            if (c < 32 || c > 126) throw new IllegalArgumentException("Caracter '" + c + "' fuera del alfabeto ASCII imprimible.");
             int mi = c - 32;
             int y = (a * mi + b) % n;
             ciphertext.append((char) (y + 32));
@@ -227,9 +238,12 @@ public class Practica2 {
         int a = key.getKey();
         int b = key.getValue();
         StringBuilder plaintext = new StringBuilder();
-        int a_inv = test(n, a);
+        
+        
+        int[] res = eea(n, a);
+        int a_inv = res[2];
         for (char c : ciphertext.toCharArray()) {
-            if (c < 32 || c > 126) throw new IllegalArgumentException("Carácter '" + c + "' fuera del alfabeto ASCII imprimible.");
+            if (c < 32 || c > 126) throw new IllegalArgumentException("Caracter '" + c + "' fuera del alfabeto ASCII imprimible.");
             int mi = c - 32;
             int y = (a_inv * (mi - b + n)) % n;
             plaintext.append((char) (y + 32));
