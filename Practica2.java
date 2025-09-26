@@ -1,4 +1,4 @@
-package practica2;
+
 
 import java.io.FileWriter;
 import java.io.IOException;
