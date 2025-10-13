@@ -1,12 +1,12 @@
 // código para el punto 2 de la práctica 5
 #include <stdio.h>
 #include <limits.h>
+#include <string.h>
 
 void obtener_n_bit(void);
 static void print_bits(unsigned int x);
 void set_nth_bit(void);
 void count_leading_zeros(void);
-static void print_bits_full(unsigned int x);
 
 int main(void) {
     int opcion;
@@ -112,36 +112,32 @@ void set_nth_bit(void) {
 }
 
 void count_leading_zeros(void) {
-    unsigned int x;
-    unsigned int total_bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
+     char binario[65];
+    unsigned int count = 0;
 
-    printf("Introduce un numero: ");
-    if (scanf("%u", &x) != 1) {
+    printf("Introduce un numero binario: ");
+    if (scanf("%64s", binario) != 1) {
         puts("Entrada invalida.");
         return;
     }
 
-    unsigned int count = 0;
-    if (x == 0u) {
-        count = total_bits;
-    } else {
-        for (int i = (int)total_bits - 1; i >= 0; --i) {
-            if ((x >> i) & 1u) break;
-            ++count;
+    unsigned int longitud = strlen(binario);
+
+    for (unsigned int i = 0; i < longitud; ++i) {
+        if (binario[i] != '0' && binario[i] != '1') {
+            puts("Error: el numero debe contener solo 0 y 1.");
+            return;
         }
     }
 
-    printf("\nRepresentacion binaria (%u bits): ", total_bits);
-    print_bits_full(x);  // ancho completo para visualizar los ceros iniciales
-    printf("Leading zeros (ceros iniciales): %u\n", count);
-    printf("------------------------------\n");
-}
-
-static void print_bits_full(unsigned int x) {
-    unsigned int total_bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
-    for (int i = (int)total_bits - 1; i >= 0; --i) {
-        putchar((x & (1u << i)) ? '1' : '0');
-        if (i % 8 == 0 && i != 0) putchar(' ');
+    for (unsigned int i = 0; i < longitud; ++i) {
+        if (binario[i] == '0')
+            count++;
+        else
+            break;
     }
-    putchar('\n');
+
+    printf("\nNumero binario ingresado: %s\n", binario);
+    printf("Leading zeros: %u\n", count);
+    printf("------------------------------\n");
 }
