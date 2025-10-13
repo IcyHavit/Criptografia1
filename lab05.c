@@ -12,11 +12,11 @@ int main(void) {
     int opcion;
     do {
     printf("LAB 05\n");
-    printf("1. Get the nth bit of a number\n");
-    printf("2. Set the nth bit of a number\n");
-    printf("3. Count leading zeros\n");
-    printf("4. Exit\n");
-    printf("Choose an option: ");
+    printf("1. Obtener el bit n de un numero\n");
+    printf("2. Prender el bit n de un numero\n");
+    printf("3. Contar ceros a la izquierda\n");
+    printf("4. Salir\n");
+    printf("Elige una opcion: ");
     scanf("%d", &opcion);
 
     switch (opcion) {
@@ -30,10 +30,10 @@ int main(void) {
             count_leading_zeros();
             break;
         case 4:
-            printf("Exiting the program.\n");
+            printf("Saliendo del programa.\n");
             break;
         default:
-            printf("Invalid option.\n");
+            printf("Opcion invalida.\n");
     }
     } while (opcion != 4);
 
@@ -66,6 +66,7 @@ void obtener_n_bit(void) {
 
 
     printf("\nNumero original: %u\n", x);
+    print_bits(x);
     printf("Bit solicitado: %u\n", n);
     printf("Resultado: %u\n", bit_shift);
     printf("------------------------------\n");
@@ -136,12 +137,11 @@ void count_leading_zeros(void) {
     printf("------------------------------\n");
 }
 
-// Imprime exactamente sizeof(unsigned int)*CHAR_BIT bits (espaciado cada 4)
 static void print_bits_full(unsigned int x) {
     unsigned int total_bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
     for (int i = (int)total_bits - 1; i >= 0; --i) {
         putchar((x & (1u << i)) ? '1' : '0');
-        if (i % 4 == 0 && i != 0) putchar(' ');
+        if (i % 8 == 0 && i != 0) putchar(' ');
     }
     putchar('\n');
 }
