@@ -36,20 +36,14 @@ void point4() {
     printf("------POINT 4--------\n");
     unsigned char v1 = 0b11001010;
     unsigned char v2 = 0b10101010;
-    printf("v1 AND v2: %X\n", v1 & v2);
-    printf("v1 AND v2: %d\n\n", v1 & v2);
-    printf("v1 OR v2: %X\n", v1 | v2);
-    printf("v1 OR v2: %d\n\n", v1 | v2);
-    printf("v1 XOR v2: %X\n", v1 ^ v2);
-    printf("v1 XOR v2: %d\n", v1 ^ v2);
+    printf("hexadecimal v1 AND v2 : %X\n", v1 & v2);
+    printf("decimal v1 AND v2 : %d\n\n", v1 & v2);
+    printf("hexadecimal v1 OR v2: %X\n", v1 | v2);
+    printf("decimal v1 OR v2: %d\n\n", v1 | v2);
+    printf("hexadecimal v1 XOR v2: %X\n", v1 ^ v2);
+    printf("decimal v1 XOR v2: %d\n", v1 ^ v2);
 }
 
-void point5() {
-    printf("------POINT 5--------\n");
-    unsigned char data2 = 0b10111010;
-    unsigned char result = data2 & 0b10000000;
-    printf("Result: 0x%X (%d)\n\n", result, result);
-}
 
 void print_binary(unsigned char n) {
     for (int i = 7; i >= 0; i--) {
@@ -58,6 +52,13 @@ void print_binary(unsigned char n) {
     printf("\n");
 }
 
+void point5() {
+    printf("------POINT 5--------\n");
+    unsigned char data2 = 0b10111010;
+    unsigned char result = data2 & 0b10000000;
+    printf("MSB:    %d\n", (result >> 7));
+
+}
 
 void point6() {
     printf("------POINT 6--------\n");

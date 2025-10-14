@@ -112,32 +112,54 @@ void set_nth_bit(void) {
 }
 
 void count_leading_zeros(void) {
-     char binario[65];
+    
+    unsigned int num = 0;
     unsigned int count = 0;
+    int bits = 0;
+    int ch;
 
-    printf("Introduce un numero binario: ");
-    if (scanf("%64s", binario) != 1) {
-        puts("Entrada invalida.");
+    printf("Introduce un numero binario (solo 0s y 1s): ");
+
+
+    do {
+        ch = getchar();
+        if (ch == EOF) { puts("Entrada invalida."); return; }
+    } while (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
+
+
+    for ( ; ch == '0' || ch == '1'; ch = getchar()) {
+        num <<= 1;             
+        if (ch == '1') num |= 1u; 
+        ++bits;
+    }
+
+    if (bits == 0) {  
+        puts("No se ingreso ningun bit valido.");
+       
+        while (ch != '\n' && ch != EOF) ch = getchar();
         return;
     }
 
-    unsigned int longitud = strlen(binario);
-
-    for (unsigned int i = 0; i < longitud; ++i) {
-        if (binario[i] != '0' && binario[i] != '1') {
-            puts("Error: el numero debe contener solo 0 y 1.");
-            return;
-        }
+ 
+    if (ch != '\n' && ch != EOF) {
+        puts("Error: el numero debe contener solo 0 y 1.");
+        while (ch != '\n' && ch != EOF) ch = getchar();
+        return;
     }
 
-    for (unsigned int i = 0; i < longitud; ++i) {
-        if (binario[i] == '0')
-            count++;
-        else
-            break;
+
+    for (int i = bits - 1; i >= 0; --i) {
+        if ((num >> i) & 1u) break;  
+        ++count;
     }
 
-    printf("\nNumero binario ingresado: %s\n", binario);
+ 
+    printf("\nNumero binario interpretado: ");
+    for (int i = bits - 1; i >= 0; --i)
+        putchar(((num >> i) & 1u) ? '1' : '0');
+    putchar('\n');
+
+    printf("Longitud: %d bits\n", bits);
     printf("Leading zeros: %u\n", count);
     printf("------------------------------\n");
 }
